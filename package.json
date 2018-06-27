@@ -1,0 +1,36 @@
+{
+  "name": "node-boilerplate",
+  "version": "0.0.0",
+  "main": "server.js",
+  "scripts": {
+    "precommit": "lint-staged",
+    "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
+    "start": "cross-env NODE_ENV=development pm2 start ecosystem.config.js --no-daemon",
+    "staging": "cross-env NODE_ENV=staging pm2 start ecosystem.config.js",
+    "prod": "cross-env NODE_ENV=production pm2 start ecosystem.config.js"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier-standard",
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "dotenv-safe": "^5.0.1",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "parse-gitignore": "^0.4.0"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.4",
+    "eslint": "^4.19.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
+    "nodemon": "^1.17.2",
+    "prettier-standard": "^8.0.0"
+  }
+}
