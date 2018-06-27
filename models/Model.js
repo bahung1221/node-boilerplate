@@ -5,9 +5,11 @@ const Model = function (table, sql) {
   this._table = table
 
   this.index = function (options) {
+    let self = this
+
     return new Promise(function(resolve, reject) {
       let queryString = queryBuilder.buildQueryString(options),
-        sql = `SELECT * from ${this._table} ${queryString}`
+        sql = `SELECT * from ${self._table} ${queryString}`
 
       DBManage.executeQuery(sql, function(err, data) {
         if (err) {

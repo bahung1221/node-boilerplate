@@ -1,12 +1,10 @@
 function buildQueryString(input) {
-  let {limit, page, sort, other} = {...input},
+  let {limit, page, sort, ...other} = {...input},
     whereStatement = buildWhereStatement(other),
     limitStatement = buildLimitStatement(limit, page),
     orderByStatement = buildOrderByStatement(sort)
 
-  let sql = `${whereStatement} ${orderByStatement} ${limitStatement}`
-
-  return sql
+  return `${whereStatement} ${orderByStatement} ${limitStatement}`
 }
 
 /**
@@ -15,6 +13,10 @@ function buildQueryString(input) {
  * @return {string}
  */
 function buildWhereStatement(input) {
+  if (!input) {
+    return ''
+  }
+
   let sql = '',
     length = Object.keys(input).length
 
@@ -24,6 +26,8 @@ function buildWhereStatement(input) {
       if (input.hasOwnProperty(item)) {
         if (count === 0) {
           sql += 'WHERE'
+          sql += ` \`${item}\` = '${input[item]}'`
+          count++
         } else {
           sql += ` \`${item}\` = '${input[item]}'`
           count++
@@ -44,9 +48,12 @@ function buildWhereStatement(input) {
  * @return {string}
  */
 function buildLimitStatement(limit, page) {
-  if (limit === 0) {
+  if ((!limit && !page) || limit === 0) {
     return ''
   }
+
+  page = page || 1
+  limit = limit || 20
 
   let pos = (page - 1) * limit
   return `LIMIT ${pos}, ${limit}`
@@ -58,6 +65,10 @@ function buildLimitStatement(limit, page) {
  * @returns {string}
  */
 function buildOrderByStatement(sort) {
+  if (!sort) {
+    return ''
+  }
+
   let field = null,
     method = null,
     statement = ''

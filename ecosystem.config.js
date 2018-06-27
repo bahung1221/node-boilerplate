@@ -7,10 +7,7 @@ if (!ENV || ['production', 'staging', 'development'].indexOf(ENV) === -1) {
 const dotenv = require('dotenv-safe')
 const gitignore = require('parse-gitignore')
 
-const envConfig = dotenv.config({
-  allowEmptyValues: true,
-  path: `.env.${ENV}`
-})
+const envConfig = dotenv.config({ path: `.env.${ENV}` })
 const patterns = gitignore('.gitignore')
 
 process.on('SIGINT', function() {
