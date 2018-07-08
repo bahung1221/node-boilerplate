@@ -1,25 +1,62 @@
 const pool = require('./mySQLConnector')
 
-function executeQuery(query, callback) {
-  pool.getConnection(function(err, connection) {
-    if (err) {
-      if (connection) connection.release()
-      callback(err)
-      return
-    }
-    connection.query(query, function(err, rows) {
-      connection.release()
+/**
+ * Execute sql query
+ * @param query
+ * @param data
+ * @returns {Promise<object>}
+ */
+function executeQuery(query, data) {
+  return new Promise(function (resolve, reject) {
+    pool.getConnection(function (err, connection) {
       if (err) {
-        callback(err)
+        if (connection) connection.release()
+        reject(err.message)
+        return
       }
-      callback(null, rows)
+      connection.query(query, function(err, rows) {
+        connection.release()
+        if (err) {
+          reject(err.message)
+        }
+        resolve(rows)
+      })
+      connection.on('error', function(err) {
+        reject(err.message)
+      })
     })
-    connection.on('error', function(err) {
-      callback(err)
+  })
+}
+
+/**
+ * Execute sql update statement
+ * @param query
+ * @param data
+ * @returns {Promise<object>}
+ */
+function executeUpdate(query, data) {
+  return new Promise(function (resolve, reject) {
+    pool.getConnection(function (err, connection) {
+      if (err) {
+        if (connection) connection.release()
+        reject(err.message)
+        return
+      }
+      connection.query(query, data, function(err, rows) {
+        connection.release()
+        if (err) {
+          reject(err.message)
+        }
+        resolve(rows)
+      })
+      connection.on('error', function(err) {
+        reject(err.message)
+      })
     })
   })
 }
 
 module.exports = {
-  executeQuery: executeQuery
+  executeQuery: executeQuery,
+  executeUpdate: executeUpdate
 }
