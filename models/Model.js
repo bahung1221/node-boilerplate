@@ -1,34 +1,38 @@
 const queryBuilder = require('./queryBuilder')
-const DBManage = require('../database/DBManage')
+const connection = require('../database/connection')
 
 /**
  * Constructor
  * @param table
- * @param sql
  * @constructor
  */
-const Model = function (table, sql) {
+const Model = function(table) {
   this._table = table
+  this._connection = connection
 }
 
 /**
  * Get all rows that match conditions (options)
  * @param options
- * @returns {Promise<object>}
+ * @param isGetMetaData
+ * @returns {Promise<any>}
  */
-Model.prototype.index = function (options) {
+Model.prototype.index = function(options, isGetMetaData = false) {
   let self = this
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     let queryString = queryBuilder.buildQueryString(options),
       sql = `SELECT * from ${self._table} ${queryString}`
 
     try {
-      let rows = await DBManage.executeQuery(sql)
+      let rows = await self._connection.executeQuery(sql)
+      if (isGetMetaData) {
+        rows = await queryBuilder.createMetaData(self._table, options, rows)
+      }
       resolve(rows)
     } catch (e) {
-      console.error(e.message)
-      reject(e.message)
+      console.error(e)
+      reject(e)
     }
   })
 }
@@ -38,18 +42,18 @@ Model.prototype.index = function (options) {
  * @param id
  * @returns {Promise<object>}
  */
-Model.prototype.find = function (id) {
+Model.prototype.find = function(id) {
   let self = this
 
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     let sql = `Select * From ${self._table} Where id = ${id} Limit 1`
 
     try {
-      let rows = await DBManage.executeQuery(sql)
+      let rows = await self._connection.executeQuery(sql)
       resolve(rows)
     } catch (e) {
-      console.error(e.message)
-      reject(e.message)
+      console.error(e)
+      reject(e)
     }
   })
 }
@@ -59,18 +63,18 @@ Model.prototype.find = function (id) {
  * @param data
  * @returns {Promise<object>}
  */
-Model.prototype.store = function (data) {
+Model.prototype.store = function(data) {
   let self = this
 
-  return new Promise(async function (resolve, reject) {
-    let sql = `Insert into ${self._table} values ?`
+  return new Promise(async function(resolve, reject) {
+    let query = queryBuilder.buildInsertQuery(self._table, data)
 
     try {
-      let rows = await DBManage.executeUpdate(sql, data)
+      let rows = await self._connection.executeUpdate(query.sql, query.data)
       resolve(rows)
     } catch (e) {
-      console.error(e.message)
-      reject(e.message)
+      console.error(e)
+      reject(e)
     }
   })
 }
@@ -81,7 +85,7 @@ Model.prototype.store = function (data) {
  * @param data
  * @returns {Promise<object>}
  */
-Model.prototype.update = function (id, data) {
+Model.prototype.update = function(id, data) {
   // TODO
 }
 
@@ -90,7 +94,7 @@ Model.prototype.update = function (id, data) {
  * @param id
  * @returns {Promise<object>}
  */
-Model.prototype.delete = function (id) {
+Model.prototype.delete = function(id) {
   // TODO
 }
 

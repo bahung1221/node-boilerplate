@@ -1,5 +1,8 @@
+const SqlString = require('sqlstring')
+const connection = require('../database/connection')
+
 function buildQueryString(input) {
-  let {limit, page, sort, ...other} = {...input},
+  let { limit, page, sort, ...other } = { ...input },
     whereStatement = buildWhereStatement(other),
     limitStatement = buildLimitStatement(limit, page),
     orderByStatement = buildOrderByStatement(sort)
@@ -26,10 +29,10 @@ function buildWhereStatement(input) {
       if (input.hasOwnProperty(item)) {
         if (count === 0) {
           sql += 'WHERE'
-          sql += ` \`${item}\` = '${input[item]}'`
+          sql += ` \`${item}\` = '${SqlString.escape(input[item])}'`
           count++
         } else {
-          sql += ` \`${item}\` = '${input[item]}'`
+          sql += ` \`${item}\` = '${SqlString.escape(input[item])}'`
           count++
           if (count !== length) {
             sql += ' and'
@@ -56,7 +59,7 @@ function buildLimitStatement(limit, page) {
   limit = limit || 20
 
   let pos = (page - 1) * limit
-  return `LIMIT ${pos}, ${limit}`
+  return `LIMIT ${pos}, ${pos + limit - 1}`
 }
 
 /**
@@ -90,6 +93,71 @@ function buildOrderByStatement(sort) {
   return statement
 }
 
+/**
+ * Create meta data (paging)
+ * @param tableName
+ * @param input
+ * @param resObj
+ * @returns {Promise<object>}
+ */
+function createMetaData(tableName, input, resObj) {
+  return new Promise(async function(resovle, reject) {
+    let sql = `Select count(id) as total from ${tableName}`,
+      { limit, page, sort, ...others } = { ...input }
+
+    if (others) {
+      let customWhereStatement = buildWhereStatement(others)
+      sql = `Select count(id) as total from ${tableName} ${customWhereStatement}`
+    }
+    console.log(sql)
+    try {
+      page = page || 1
+      limit = limit || 20
+
+      let data = await connection.executeQuery(sql),
+        total = data[0].total,
+        perPage = Number(limit) === 0 ? total : limit,
+        lastPage = Number(limit) === 0 ? 1 : Math.ceil(total / limit),
+        currentPageCount = resObj.length
+
+      let meta = {
+        total: total,
+        perPage: perPage,
+        currentPage: page,
+        lastPage: lastPage,
+        currentPageCount: currentPageCount,
+        data: resObj
+      }
+
+      resovle(meta)
+    } catch (e) {
+      console.error(e)
+      reject(e)
+    }
+  })
+}
+
+/**
+ * Build query & data for insert statement
+ * @param tableName
+ * @param input
+ * @returns {{sql: string, data: any[]}}
+ */
+function buildInsertQuery(tableName, input) {
+  let keys = Object.keys(input),
+    values = keys.map(key => input[key]),
+    sql = `Insert into ${tableName}(${keys
+      .map(key => `\`${key}\``)
+      .join(',')}) values (?)`
+
+  return {
+    sql: sql,
+    data: values
+  }
+}
+
 module.exports = {
-  buildQueryString: buildQueryString
+  buildQueryString: buildQueryString,
+  createMetaData: createMetaData,
+  buildInsertQuery: buildInsertQuery
 }

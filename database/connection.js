@@ -7,8 +7,8 @@ const pool = require('./mySQLConnector')
  * @returns {Promise<object>}
  */
 function executeQuery(query, data) {
-  return new Promise(function (resolve, reject) {
-    pool.getConnection(function (err, connection) {
+  return new Promise(function(resolve, reject) {
+    pool.getConnection(function(err, connection) {
       if (err) {
         if (connection) connection.release()
         reject(err.message)
@@ -35,8 +35,8 @@ function executeQuery(query, data) {
  * @returns {Promise<object>}
  */
 function executeUpdate(query, data) {
-  return new Promise(function (resolve, reject) {
-    pool.getConnection(function (err, connection) {
+  return new Promise(function(resolve, reject) {
+    pool.getConnection(function(err, connection) {
       if (err) {
         if (connection) connection.release()
         reject(err.message)

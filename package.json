@@ -24,7 +24,8 @@
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
-    "parse-gitignore": "^0.4.0"
+    "parse-gitignore": "^0.4.0",
+    "sqlstring": "^2.3.1"
   },
   "devDependencies": {
     "cross-env": "^5.1.4",
