@@ -67,10 +67,10 @@ Model.prototype.store = function(data) {
   let self = this
 
   return new Promise(async function(resolve, reject) {
-    let query = queryBuilder.buildInsertQuery(self._table, data)
+    let sql = queryBuilder.buildInsertQuery(self._table, data)
 
     try {
-      let rows = await self._connection.executeUpdate(query.sql, query.data)
+      let rows = await self._connection.executeUpdate(sql)
       resolve(rows)
     } catch (e) {
       console.error(e)

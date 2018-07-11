@@ -59,7 +59,7 @@ function buildLimitStatement(limit, page) {
   limit = limit || 20
 
   let pos = (page - 1) * limit
-  return `LIMIT ${pos}, ${pos + limit - 1}`
+  return `LIMIT ${pos}, ${limit}`
 }
 
 /**
@@ -146,14 +146,17 @@ function createMetaData(tableName, input, resObj) {
 function buildInsertQuery(tableName, input) {
   let keys = Object.keys(input),
     values = keys.map(key => input[key]),
-    sql = `Insert into ${tableName}(${keys
-      .map(key => `\`${key}\``)
-      .join(',')}) values (?)`
+    sqlKeys = keys.map(key => `\`${key}\``).join(','),
+    sqlValues = values.map(value => SqlString.escape(value)).join(','),
+    sql = `Insert into ${tableName}(${sqlKeys}) values (${sqlValues})`
 
-  return {
-    sql: sql,
-    data: values
-  }
+  return sql
+}
+
+function updateQuery(tableName, input, id) {
+  let sql = `Update ${tableName} Set ? Where id = ${SqlString.escape(id)}`
+
+  return sql
 }
 
 module.exports = {
