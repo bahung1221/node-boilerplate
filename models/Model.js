@@ -86,7 +86,19 @@ Model.prototype.store = function(data) {
  * @returns {Promise<object>}
  */
 Model.prototype.update = function(id, data) {
-  // TODO
+  let self = this
+
+  return new Promise(async function(resolve, reject) {
+    let sql = queryBuilder.updateQuery(self._table, id)
+
+    try {
+      let rows = await self._connection.executeUpdate(sql, data)
+      resolve(rows)
+    } catch (e) {
+      console.error(e)
+      reject(e)
+    }
+  })
 }
 
 /**
@@ -95,7 +107,19 @@ Model.prototype.update = function(id, data) {
  * @returns {Promise<object>}
  */
 Model.prototype.delete = function(id) {
-  // TODO
+  let self = this
+
+  return new Promise(async function(resolve, reject) {
+    let sql = queryBuilder.deleteQuery(self._table, id)
+
+    try {
+      let rows = await self._connection.executeQuery(sql)
+      resolve(rows)
+    } catch (e) {
+      console.error(e)
+      reject(e)
+    }
+  })
 }
 
 module.exports = {

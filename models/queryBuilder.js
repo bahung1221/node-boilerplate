@@ -153,8 +153,27 @@ function buildInsertQuery(tableName, input) {
   return sql
 }
 
-function updateQuery(tableName, input, id) {
+/**
+ * Build sql update statement
+ * @param tableName
+ * @param input
+ * @param id
+ * @returns {string}
+ */
+function updateQuery(tableName, id) {
   let sql = `Update ${tableName} Set ? Where id = ${SqlString.escape(id)}`
+
+  return sql
+}
+
+/**
+ * Build sql delete statement
+ * @param tableName
+ * @param id
+ * @returns {string}
+ */
+function deleteQuery(tableName, id) {
+  let sql = `Delete from ${tableName} Where id = ${SqlString.escape(id)}`
 
   return sql
 }
@@ -162,5 +181,7 @@ function updateQuery(tableName, input, id) {
 module.exports = {
   buildQueryString: buildQueryString,
   createMetaData: createMetaData,
-  buildInsertQuery: buildInsertQuery
+  buildInsertQuery: buildInsertQuery,
+  updateQuery: updateQuery,
+  deleteQuery: deleteQuery
 }

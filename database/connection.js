@@ -3,10 +3,9 @@ const pool = require('./mySQLConnector')
 /**
  * Execute sql query
  * @param query
- * @param data
  * @returns {Promise<object>}
  */
-function executeQuery(query, data) {
+function executeQuery(query) {
   return new Promise(function(resolve, reject) {
     pool.getConnection(function(err, connection) {
       if (err) {
