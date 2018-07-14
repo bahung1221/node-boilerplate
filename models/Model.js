@@ -21,8 +21,7 @@ Model.prototype.index = function(options, isGetMetaData = false) {
   let self = this
 
   return new Promise(async function(resolve, reject) {
-    let queryString = queryBuilder.buildQueryString(options),
-      sql = `SELECT * from ${self._table} ${queryString}`
+    let sql = queryBuilder.selectQuery(self._table, options)
 
     try {
       let rows = await self._connection.executeQuery(sql)
@@ -46,7 +45,7 @@ Model.prototype.find = function(id) {
   let self = this
 
   return new Promise(async function(resolve, reject) {
-    let sql = `Select * From ${self._table} Where id = ${id} Limit 1`
+    let sql = queryBuilder.selectById(self._table, id)
 
     try {
       let rows = await self._connection.executeQuery(sql)
@@ -67,10 +66,10 @@ Model.prototype.store = function(data) {
   let self = this
 
   return new Promise(async function(resolve, reject) {
-    let sql = queryBuilder.buildInsertQuery(self._table, data)
+    let sql = queryBuilder.insertQuery(self._table, data)
 
     try {
-      let rows = await self._connection.executeUpdate(sql)
+      let rows = await self._connection.executeQuery(sql)
       resolve(rows)
     } catch (e) {
       console.error(e)

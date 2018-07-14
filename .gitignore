@@ -70,3 +70,6 @@ typings/
 # Package management lock files
 yarn.lock
 package-lock.json
+
+# Config
+config/database.json

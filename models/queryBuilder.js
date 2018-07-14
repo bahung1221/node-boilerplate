@@ -1,18 +1,67 @@
 const SqlString = require('sqlstring')
 const connection = require('../database/connection')
 
-function buildQueryString(input) {
+function selectQuery(tableName, input) {
   let { limit, page, sort, ...other } = { ...input },
     whereStatement = buildWhereStatement(other),
     limitStatement = buildLimitStatement(limit, page),
     orderByStatement = buildOrderByStatement(sort)
 
-  return `${whereStatement} ${orderByStatement} ${limitStatement}`
+  return `SELECT * from ${tableName} ${whereStatement} ${orderByStatement} ${limitStatement}`
+}
+
+function selectById(tableName, id) {
+  let sql = `Select * From ${tableName} Where id = ${SqlString.escape(
+    id
+  )} Limit 1`
+
+  return sql
+}
+
+/**
+ * Build query & data for insert statement
+ * @param tableName
+ * @param input
+ * @returns {{sql: string, data: any[]}}
+ */
+function insertQuery(tableName, input) {
+  let keys = Object.keys(input),
+    values = keys.map(key => input[key]),
+    sqlKeys = keys.map(key => `\`${key}\``).join(','),
+    sqlValues = values.map(value => SqlString.escape(value)).join(','),
+    sql = `Insert into ${tableName}(${sqlKeys}) values (${sqlValues})`
+
+  return sql
+}
+
+/**
+ * Build sql update statement
+ * @param tableName
+ * @param input
+ * @param id
+ * @returns {string}
+ */
+function updateQuery(tableName, id) {
+  let sql = `Update ${tableName} Set ? Where id = ${SqlString.escape(id)}`
+
+  return sql
+}
+
+/**
+ * Build sql delete statement
+ * @param tableName
+ * @param id
+ * @returns {string}
+ */
+function deleteQuery(tableName, id) {
+  let sql = `Delete from ${tableName} Where id = ${SqlString.escape(id)}`
+
+  return sql
 }
 
 /**
  * Create sql where statement based on input object
- * @param {Object} obj
+ * @param {Object} input
  * @return {string}
  */
 function buildWhereStatement(input) {
@@ -137,51 +186,11 @@ function createMetaData(tableName, input, resObj) {
   })
 }
 
-/**
- * Build query & data for insert statement
- * @param tableName
- * @param input
- * @returns {{sql: string, data: any[]}}
- */
-function buildInsertQuery(tableName, input) {
-  let keys = Object.keys(input),
-    values = keys.map(key => input[key]),
-    sqlKeys = keys.map(key => `\`${key}\``).join(','),
-    sqlValues = values.map(value => SqlString.escape(value)).join(','),
-    sql = `Insert into ${tableName}(${sqlKeys}) values (${sqlValues})`
-
-  return sql
-}
-
-/**
- * Build sql update statement
- * @param tableName
- * @param input
- * @param id
- * @returns {string}
- */
-function updateQuery(tableName, id) {
-  let sql = `Update ${tableName} Set ? Where id = ${SqlString.escape(id)}`
-
-  return sql
-}
-
-/**
- * Build sql delete statement
- * @param tableName
- * @param id
- * @returns {string}
- */
-function deleteQuery(tableName, id) {
-  let sql = `Delete from ${tableName} Where id = ${SqlString.escape(id)}`
-
-  return sql
-}
-
 module.exports = {
-  buildQueryString: buildQueryString,
+  selectQuery: selectQuery,
+  selectById: selectById,
   createMetaData: createMetaData,
-  buildInsertQuery: buildInsertQuery,
+  insertQuery: insertQuery,
   updateQuery: updateQuery,
   deleteQuery: deleteQuery
 }
