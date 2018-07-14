@@ -9,7 +9,7 @@ function sign(payload) {
   return new Promise(function(resolve, reject) {
     jwt.sign(payload, cert, { expiresIn: '24h' }, function(err, token) {
       if (err) {
-        reject
+        reject(err)
       }
       resolve(token)
     })
@@ -59,7 +59,7 @@ async function jwtMiddleware(req, res, next) {
     try {
       let decoded = await verify(token)
       req.decoded = decoded
-      next()
+      return next()
     } catch (e) {
       return res.status(401).json({
         success: false,
