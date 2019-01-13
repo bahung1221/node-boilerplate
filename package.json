@@ -4,10 +4,10 @@
   "main": "server.js",
   "scripts": {
     "precommit": "lint-staged",
-    "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
-    "start": "cross-env NODE_ENV=development pm2 start ecosystem.config.js --no-daemon",
-    "staging": "cross-env NODE_ENV=staging pm2 start ecosystem.config.js",
-    "prod": "cross-env NODE_ENV=production pm2 start ecosystem.config.js"
+    "run:dev": "cross-env NODE_ENV=development nodemon ./bin/www",
+    "run:start": "cross-env NODE_ENV=development pm2 start ecosystem.config.js --no-daemon",
+    "run:staging": "cross-env NODE_ENV=staging pm2 start ecosystem.config.js",
+    "run:prod": "cross-env NODE_ENV=production pm2 start ecosystem.config.js"
   },
   "lint-staged": {
     "*.js": [
@@ -17,23 +17,21 @@
     ]
   },
   "dependencies": {
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "dotenv-safe": "^5.0.1",
-    "express": "~4.16.0",
-    "http-errors": "~1.6.2",
-    "jsonwebtoken": "^8.3.0",
-    "morgan": "~1.9.0",
-    "mysql": "^2.15.0",
-    "parse-gitignore": "^0.4.0",
-    "sqlstring": "^2.3.1"
+    "cookie-parser": "^1.4.3",
+    "debug": "^4.1.1",
+    "dotenv-safe": "^6.1.0",
+    "express": "^4.16.4",
+    "http-errors": "^1.6.2",
+    "jsonwebtoken": "^8.4.0",
+    "morgan": "^1.9.1",
+    "parse-gitignore": "^0.4.0"
   },
   "devDependencies": {
-    "cross-env": "^5.1.4",
-    "eslint": "^4.19.1",
-    "husky": "^0.14.3",
-    "lint-staged": "^7.0.0",
-    "nodemon": "^1.17.2",
-    "prettier-standard": "^8.0.0"
+    "cross-env": "^5.2.0",
+    "eslint": "^5.12.0",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.0",
+    "nodemon": "^1.18.9",
+    "prettier-standard": "^8.0.1"
   }
 }
