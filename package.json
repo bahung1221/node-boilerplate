@@ -3,16 +3,18 @@
     "version": "0.0.0",
     "main": "server.js",
     "scripts": {
-        "lint": "prettier-standard && eslint --fix",
-        "run:local": "cross-env NODE_ENV=local denodemon ./bin/www",
+        "precommit": "lint-staged",
+        "run:local": "cross-env NODE_ENV=local nodemon ./bin/www",
         "run:local:pm2": "cross-env NODE_ENV=local pm2 start ecosystem.config.js --no-daemon",
         "run:staging": "cross-env NODE_ENV=staging pm2 start ecosystem.config.js",
         "run:prod": "cross-env NODE_ENV=production pm2 start ecosystem.config.js"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "npm run lint"
-        }
+    "lint-staged": {
+        "*.js": [
+            "prettier-standard",
+            "eslint --fix",
+            "git add"
+        ]
     },
     "dependencies": {
         "cookie-parser": "~1.4.3",

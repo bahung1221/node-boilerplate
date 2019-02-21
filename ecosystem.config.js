@@ -10,7 +10,7 @@ const gitignore = require('parse-gitignore')
 const envConfig = dotenv.config({ path: `.env.${ENV}` })
 const patterns = gitignore('.gitignore')
 
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
   const { exec } = require('child_process')
   exec('pm2 delete all')
 })
