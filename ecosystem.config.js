@@ -1,5 +1,5 @@
 const ENV = process.env.NODE_ENV
-if (!ENV || ['production', 'staging', 'development'].indexOf(ENV) === -1) {
+if (!ENV || ['production', 'staging', 'local'].indexOf(ENV) === -1) {
   console.log('No NODE_ENV...')
   process.exit(0)
 }
@@ -21,7 +21,7 @@ module.exports = {
       name: 'node-boilerplate', // TODO: change this name
       script: './bin/www',
       env: envConfig,
-      watch: envConfig.parsed.NODE_ENV === 'development',
+      watch: envConfig.parsed.NODE_ENV === 'local',
       wait_ready: true,
       ignore_watch: patterns,
       error_file: './logs/err.log',
